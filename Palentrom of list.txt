@@ -1,0 +1,29 @@
+3 6 first_element_location:first length:5
+res:2
+7 first_element_location address1
+4 zero length true
+4 one length true
+1 address1 length last
+1 address1 length last1
+1 address1 length last2
+2 last one last
+2 last1 one last1
+2 last2 one last2
+1 address1 length last3
+2 last3 one last3
+4 first last3:0 check
+9
+check:5 last2 address1 stop
+4 address1:0 last1:0 yes
+7 one res
+9
+yes:1 address1 one address1
+2 last one last
+2 last1 one last1
+2 last2 one last2
+3 check
+true:7 one res
+stop:9
+zero:0 one:1 two:2
+last:0 last2:0 
+first:1 1 2 2 1
