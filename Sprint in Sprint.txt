@@ -1,0 +1,118 @@
+3 start1
+program:
+
+one1:1 two1:2 three1:3  four1:4 five1:5 seven1:7 nine1:9 a22:0 a28:0 zero1:0 ten:10 a34:0
+
+start1:7 read:3 a
+        4 a three1 jump
+        4 a nine1 stop1
+        4 a seven1 copy
+        4 a one1 add
+        4 a two1 subtract
+        4 a four1 equal
+        4 a five1 less_than
+        4 a zero1 put
+        4 a ten multiplication
+        stop1:9
+
+ jump:1 read one1 a
+       7 a:0 a1
+        1 a1 two1 a1
+       7 a1 read
+3 start1
+
+copy:1 read one1 a2
+       7 a2:0 a1
+       1 a1 two1 a1
+
+       1 a2 one1 a3
+       7 a3:0 a4
+       1 a4 two1 a4
+      7 a1:0 a4:0
+      1 read three1 read
+3 start1    
+
+add:1 read one1 a5
+       7 a5:0 a6
+       1 a6 two1 a6
+       
+       1 a5 one1 a7
+       7 a7:0 a8
+       1 a8 two1 a8
+   
+      1 a7 one1 a9
+       7 a9:0 a10
+       1 a10 two1 a10
+   1 a6:0 a8:0 a10:0
+1 read four1 read
+3 start1
+
+subtract:1 read one1 a11
+       7 a11:0 a12
+       1 a12 two1 a12
+       
+       1 a11 one1 a13
+       7 a13:0 a14
+       1 a14 two1 a14
+   
+      1 a13 one1 a15
+       7 a15:0 a16
+       1 a16 two1 a16
+   2 a12:0 a14:0 a16:0
+1 read four1 read
+ 3 start1
+
+equal:1 read one1 a17
+       7 a17:0 a18
+       1 a18 two1 a18
+       
+       1 a17 one1 a19
+       7 a19:0 a20
+       1 a20 two1 a20
+   
+      1 a19 one1 a21
+       7 a21:0 a22
+       1 a22 two1 a22
+   4 a18:0 a20:0 true1
+1 read four1 read
+ 3 start1
+true1:7 a22 read
+3 start1
+
+less_than:1 read one1 a23
+       7 a23:0 a24
+       1 a24 two1 a24
+       
+       1 a23 one1 a25
+       7 a25:0 a26
+       1 a26 two1 a26
+   
+      1 a25 one1 a27
+       7 a27:0 a28
+       1 a28 two1 a28
+   5 a24:0 a26:0 yes1
+1 read four1 read
+ 3 start1
+yes1:7 a28 read
+3 start1
+
+put:1 read one1 a29
+       7 a29:0 a30
+       
+
+       1 a29 one1 a31
+       7 a31:0 a32
+       1 a32 two1 a32
+      7 a30:0 a32:0
+      1 read three1 read
+3 start1    
+
+multiplication:1 read one1 a33
+         7 a33:0 a34
+         
+
+       
+  
+
+
+
