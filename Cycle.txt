@@ -1,0 +1,27 @@
+3 start
+seq_location:seq1
+seq_length:3
+cycle_location:cycle1
+cycle_length:5
+start:7 seq_location address1
+7 cycle_location address2
+1 seq_length address1 last
+2 last one last
+check:4 cycle_length count stop
+    7   address1:seq_location         
+     address2:cycle_location
+    4 address1 last true
+cond:1 address2 one address2
+      1 address1 one address1
+      1 count one count
+3 check
+true:7 seq_location address1
+        1 address2 one address2
+         1 count one count
+3 check
+stop:9
+last:0
+count:0
+one:1
+seq1:1 2 3 4 5 6 7 8 9 10
+cycle1:0 
