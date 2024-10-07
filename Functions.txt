@@ -1,0 +1,26 @@
+// finding maximum between two sum results
+3 start
+one:1
+two:2
+three:3
+four:4
+five:5
+location1:0
+start:call:3 add n1:0 n2:0 res1:0 3 add n3:0 n4:0 res2:0 3 max res3:0 9
+add:1 location four res
+        1 location two n1_location
+          1 location three n2_location
+          1 location two n1_location1
+          1 location three n2_location1
+     6 n1_location1:0
+     6 n2_location1:0
+     1 n1_location:0 n2_location:0 res:0
+     1  location five location
+     3 location:call
+max:1 location1 two res3
+     5 res1 res2 true
+     7 res1 res3
+true:7 res2 res3
+  0 res3 call1
+1 call1 one call1
+ 3 call1:0
