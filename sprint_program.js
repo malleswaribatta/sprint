@@ -1,10 +1,8 @@
-// const sprintCode = [3, 3, 9, 7, 2, 6, 0, 3, 2, 0, 10];
-
 const copy = (sprintCode, index) => {
-  const fromIndex = sprintCode[index + 1];
-  const toIndex = sprintCode[index + 2];
+  const sourceIndex = sprintCode[index + 1];
+  const destinationIndex = sprintCode[index + 2];
 
-  sprintCode[toIndex] = sprintCode[fromIndex];
+  sprintCode[destinationIndex] = sprintCode[sourceIndex];
   return index + 3;
 };
 
@@ -14,7 +12,7 @@ const jump = (sprintCode, index) => {
   return sprintCode[index + 1];
 };
 
-const getIndexs = (sprintCode, index) => {
+const getIndices = (sprintCode, index) => {
   const index1 = sprintCode[index + 1];
   const index2 = sprintCode[index + 2];
   const index3 = sprintCode[index + 3];
@@ -23,52 +21,74 @@ const getIndexs = (sprintCode, index) => {
 };
 
 const add = (sprintCode, index) => {
-  const [value1Index, value2Index, resultIndex] = getIndexs(index);
+  const [operand1Index, operand2Index, resultIndex] = getIndices(index);
 
-  sprintCode[resultIndex] = sprintCode[value1Index] + sprintCode[value2Index];
+  sprintCode[resultIndex] =
+    sprintCode[operand1Index] + sprintCode[operand2Index];
 
   return index + 4;
 };
 
 const sub = (sprintCode, index) => {
-  const [value1Index, value2Index, resultIndex] = getIndexs(sprintCode, index);
+  const [operand1Index, operand2Index, resultIndex] = getIndices(
+    sprintCode,
+    index
+  );
 
-  sprintCode[resultIndex] = sprintCode[value1Index] - sprintCode[value2Index];
+  sprintCode[resultIndex] =
+    sprintCode[operand1Index] - sprintCode[operand2Index];
 
   return index + 4;
 };
 
 const put = (sprintCode, index) => {
   const value = index + 1;
-  const toIndex = sprintCode[index + 2];
+  const destinationIndex = sprintCode[index + 2];
 
-  sprintCode[toIndex] = value;
+  sprintCode[destinationIndex] = value;
 
   return index + 3;
 };
 
 const equal = (sprintCode, index) => {
-  const [value1Index, value2Index, jumpTo] = getIndexs(index);
+  const [operand1Index, operand2Index, destinationIndex] = getIndices(index);
 
-  const value1 = sprintCode[value1Index];
-  const value2 = sprintCode[value2Index];
+  const operand1 = sprintCode[operand1Index];
+  const operand2 = sprintCode[operand2Index];
 
-  const goTo = value1 === value2 ? jumpTo : index + 4;
+  const jumTo = operand1 === operand2 ? destinationIndex : index + 4;
 
-  return goTo;
+  return jumTo;
 };
 
 const lessThan = (sprintCode, index) => {
-  const [value1Index, value2Index, jumpTo] = getIndexs(index);
+  const [operand1Index, operand2Index, destinationIndex] = getIndices(index);
 
-  const value1 = sprintCode[value1Index];
-  const value2 = sprintCode[value2Index];
-  const goTo = value1 < value2 ? jumpTo : index + 4;
+  const operand1 = sprintCode[operand1Index];
+  const operand2 = sprintCode[operand2Index];
 
-  return goTo;
+  const jumTo = operand1 < operand2 ? destinationIndex : index + 4;
+
+  return jumTo;
 };
 
-const main = (value, index, sprintCode) => {
+const createTableWithIndexes = (sprintCode) => {
+  let indexLine = "";
+
+  for (let i = 1; i <= sprintCode.length; i++) {
+    indexLine += "  " + i + " ";
+  }
+
+  const lineLength = sprintCode.length * 4.1;
+  const line = "\n" + "-".repeat(lineLength) + "\n";
+  const tableRow = sprintCode.map((element) => "| " + element).join(" ") + " |";
+
+  const formattedTable = line + tableRow + line + indexLine;
+
+  return formattedTable;
+};
+
+const processInstruction = (instruction, index, sprintCode) => {
   const instructions = {
     0: put,
     1: add,
@@ -80,41 +100,28 @@ const main = (value, index, sprintCode) => {
     9: stop,
   };
 
-  if (value in instructions) {
-    const fun = instructions[value];
-    index = fun(sprintCode, index);
-    return index;
+  if (instruction in instructions) {
+    const operation = instructions[instruction];
+
+    return operation(sprintCode, index);
   }
 
   console.log("unknown instuction at index:", index + 1);
   return sprintCode.length;
 };
 
-const getIndex = (sprintCode) => {
-  let indexs = "";
-
-  for (let i = 1; i <= sprintCode.length; i++) {
-    indexs += "  " + i + " ";
-  }
-
-  return indexs;
-};
-
 const executeSprintCode = (sprintCode) => {
-  let index = 0;
+  let currentIndex = 0;
 
-  while (index < sprintCode.length) {
-    index = main(sprintCode[index], index, sprintCode);
+  while (currentIndex < sprintCode.length) {
+    currentIndex = processInstruction(
+      sprintCode[currentIndex],
+      currentIndex,
+      sprintCode
+    );
   }
 
-  const indexs = getIndex(sprintCode);
-  const times = sprintCode.length * 4.1;
-  const line = "\n" + "-".repeat(times) + "\n";
-  const box = sprintCode.map((element) => "| " + element).join(" ") + " |";
-
-  const result = line + box + line + indexs;
-
-  return result;
+  return createTableWithIndexes(sprintCode);
 };
 
 console.log(executeSprintCode([3, 3, 9, 7, 2, 6, 0, 3, 2, 0, 10]));
