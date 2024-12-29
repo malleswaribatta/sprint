@@ -34,7 +34,7 @@ const sub = (index) => {
   return index + 4;
 };
 
-const move = (index) => {
+const put = (index) => {
   const value = index + 1;
   const toIndex = sprintCode[index + 2];
 
@@ -72,7 +72,7 @@ const lessThan = (index) => {
 };
 
 const instructions = {
-  0: move,
+  0: put,
   1: add,
   2: sub,
   3: jump,
