@@ -1,94 +1,87 @@
-const copy = (sprintCode, index) => {
-  const sourceIndex = sprintCode[index + 1];
-  const destinationIndex = sprintCode[index + 2];
-
-  sprintCode[destinationIndex] = sprintCode[sourceIndex];
-  return index + 3;
-};
-
-const stop = (sprintCode) => sprintCode.length;
-
-const jump = (sprintCode, index) => {
-  return sprintCode[index + 1];
-};
-
-const getIndices = (sprintCode, index) => {
-  const index1 = sprintCode[index + 1];
-  const index2 = sprintCode[index + 2];
-  const index3 = sprintCode[index + 3];
-
-  return [index1, index2, index3];
-};
-
-const add = (sprintCode, index) => {
-  const [operand1Index, operand2Index, resultIndex] = getIndices(index);
-
-  sprintCode[resultIndex] =
-    sprintCode[operand1Index] + sprintCode[operand2Index];
-
-  return index + 4;
-};
-
-const sub = (sprintCode, index) => {
-  const [operand1Index, operand2Index, resultIndex] = getIndices(
-    sprintCode,
-    index
+const copy = (memory, instructionAddress) => {
+  const [sourceAddress, destinationAddress] = memory.slice(
+    instructionAddress + 1,
+    instructionAddress + 3
   );
 
-  sprintCode[resultIndex] =
-    sprintCode[operand1Index] - sprintCode[operand2Index];
+  memory[destinationAddress] = memory[sourceAddress];
 
-  return index + 4;
+  return { isHalted: false, programCounter: instructionAddress + 3 };
 };
 
-const put = (sprintCode, index) => {
-  const value = index + 1;
-  const destinationIndex = sprintCode[index + 2];
+const halt = (memory, programCounter) => ({
+  isHalted: true,
+  programCounter,
+});
 
-  sprintCode[destinationIndex] = value;
-
-  return index + 3;
+const jump = (memory, programCounter) => {
+  return { isHalted: false, programCounter: memory[programCounter + 1] };
 };
 
-const equal = (sprintCode, index) => {
-  const [operand1Index, operand2Index, destinationIndex] = getIndices(index);
-
-  const operand1 = sprintCode[operand1Index];
-  const operand2 = sprintCode[operand2Index];
-
-  const jumTo = operand1 === operand2 ? destinationIndex : index + 4;
-
-  return jumTo;
+const getIndices = (memory, address) => {
+  return memory.slice(address + 1, address + 4);
 };
 
-const lessThan = (sprintCode, index) => {
-  const [operand1Index, operand2Index, destinationIndex] = getIndices(index);
+const add = (memory, instructionAddress) => {
+  const [operand1Address, operand2Address, resultAddress] = getIndices(
+    memory,
+    instructionAddress
+  );
 
-  const operand1 = sprintCode[operand1Index];
-  const operand2 = sprintCode[operand2Index];
+  memory[resultAddress] = memory[operand1Address] + memory[operand2Address];
 
-  const jumTo = operand1 < operand2 ? destinationIndex : index + 4;
-
-  return jumTo;
+  return { isHalted: false, programCounter: instructionAddress + 4 };
 };
 
-const createTableWithIndexes = (sprintCode) => {
-  let indexLine = "";
+const sub = (memory, instructionAddress) => {
+  const [operand1Address, operand2Address, resultAddress] = getIndices(
+    memory,
+    instructionAddress
+  );
 
-  for (let i = 1; i <= sprintCode.length; i++) {
-    indexLine += "  " + i + " ";
-  }
+  memory[resultAddress] = memory[operand1Address] - memory[operand2Address];
 
-  const lineLength = sprintCode.length * 4.1;
-  const line = "\n" + "-".repeat(lineLength) + "\n";
-  const tableRow = sprintCode.map((element) => "| " + element).join(" ") + " |";
-
-  const formattedTable = line + tableRow + line + indexLine;
-
-  return formattedTable;
+  return { isHalted: false, programCounter: instructionAddress + 4 };
 };
 
-const processInstruction = (instruction, index, sprintCode) => {
+const put = (memory, instructionAddress) => {
+  const value = instructionAddress + 1;
+  const destinationAddress = memory[instructionAddress + 2];
+
+  memory[destinationAddress] = value;
+
+  return { isHalted: false, programCounter: instructionAddress + 3 };
+};
+
+const equal = (memory, instructionAddress) => {
+  const [operand1Address, operand2Address, destinationAddress] =
+    getIndices(instructionAddress);
+
+  const operand1 = memory[operand1Address];
+  const operand2 = memory[operand2Address];
+
+  const jumTo =
+    operand1 === operand2 ? destinationAddress : instructionAddress + 4;
+
+  return { isHalted: false, programCounter: jumTo };
+};
+
+const lessThan = (memory, instructionAddress) => {
+  const [operand1Address, operand2Address, destinationAddress] =
+    getIndices(instructionAddress);
+
+  const operand1 = memory[operand1Address];
+  const operand2 = memory[operand2Address];
+
+  const jumTo =
+    operand1 < operand2 ? destinationAddress : instructionAddress + 4;
+
+  return { isHalted: false, programCounter: jumTo };
+};
+
+const processInstruction = (programCounter, memory) => {
+  const instruction = memory[programCounter];
+
   const instructions = {
     0: put,
     1: add,
@@ -97,31 +90,30 @@ const processInstruction = (instruction, index, sprintCode) => {
     4: equal,
     5: lessThan,
     7: copy,
-    9: stop,
+    9: halt,
   };
 
   if (instruction in instructions) {
     const operation = instructions[instruction];
 
-    return operation(sprintCode, index);
+    return operation(memory, programCounter);
   }
 
-  console.log("unknown instuction at index:", index + 1);
-  return sprintCode.length;
+  console.log("unknown instuction at Address:", programCounter);
+  return { isHalted: true, programCounter };
 };
 
-const executeSprintCode = (sprintCode) => {
-  let currentIndex = 0;
+const executeSprintCode = (memory) => {
+  let programState = {
+    programCounter: 0,
+    isHalted: false,
+  };
 
-  while (currentIndex < sprintCode.length) {
-    currentIndex = processInstruction(
-      sprintCode[currentIndex],
-      currentIndex,
-      sprintCode
-    );
+  while (!programState.isHalted) {
+    programState = processInstruction(programState.programCounter, memory);
   }
 
-  return createTableWithIndexes(sprintCode);
+  return [memory];
 };
 
-console.log(executeSprintCode([3, 3, 9, 7, 2, 6, 0, 3, 2, 0, 10]));
+console.table(executeSprintCode([1, 0, 1, 3, 8]));
