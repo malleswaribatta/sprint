@@ -1,3 +1,5 @@
+import { fn } from "./functions.js";
+
 const copy = (memory, instructionAddress) => {
   const [sourceAddress, destinationAddress] = memory.slice(
     instructionAddress + 1,
@@ -79,9 +81,8 @@ const lessThan = (memory, instructionAddress) => {
   return { isHalted: false, programCounter: jumTo };
 };
 
-const processInstruction = (programCounter, memory) => {
+export const processInstruction = (programCounter, memory) => {
   const instruction = memory[programCounter];
-
   const instructions = {
     0: put,
     1: add,
@@ -90,6 +91,7 @@ const processInstruction = (programCounter, memory) => {
     4: equal,
     5: lessThan,
     7: copy,
+    8: fn,
     9: halt,
   };
 
@@ -116,4 +118,8 @@ const executeSprintCode = (memory) => {
   return [memory];
 };
 
-console.table(executeSprintCode([1, 0, 1, 3, 8]));
+console.table(
+  executeSprintCode([
+    8, 1999, 2, 10, 20, 8, 0, 9, 99, 1999, 0, 0, 1, 10, 11, 6, 3, 7, 9,
+  ])
+);
