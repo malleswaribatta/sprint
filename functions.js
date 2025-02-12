@@ -1,34 +1,49 @@
 import { processInstruction } from "./sprint_program.js";
 
-const info = (memory, programCounter) => {
+const extractInstructionData = (memory, programCounter) => {
+  const endOfFnCall = memory[programCounter + 1] + 4;
   const [name, length, ...args] = memory.slice(
     programCounter,
-    memory[programCounter + 1] + 4
+    endOfFnCall
   );
 
-  return [name, length, args.pop(), args];
+  const functionDefStartsLocation = args.pop();
+
+  return [name, length, functionDefStartsLocation, args];
 };
 
-//[
-  // 8, 1999, 2, 10, 20, 8, 0, 9, 99, 1999, 0, 0, 1, 10, 11, 6, 3, 7, 9,
-// ]
-const fnDef = (length, programCounter, args, memory) => {
-  const argsEnd = length + programCounter + 2;
-  
-  for (let i = programCounter + 2; i < argsEnd; i++) {
+const executeFnDefinition = (length, programCounter, args, memory) => {
+  const argsEndIndex = length + programCounter;
+
+  for (let i = programCounter; i < argsEndIndex; i++) {
     memory[i] = args.shift();
   }
 
-  processInstruction(argsEnd, memory);
+  processInstruction(argsEndIndex, memory);
 };
 
-export const fn = (memory, programCounter) => {
-  const [nameFn, length, fnDefinitionLocation, args] = info(
-    memory,
-    programCounter + 1
-  );
+export const executeFunction = (memory, programCounter) => {
+  const [functionName, length, fnDefinitionLocation, args] =
+    extractInstructionData(memory, programCounter + 1);
 
-  fnDef(length, fnDefinitionLocation, args, memory);
+  executeFnDefinition(length, fnDefinitionLocation + 2, args, memory);
 
-  return { isHalted: false, programCounter: fnDefinitionLocation - 1 }
+  return { isHalted: false, programCounter: fnDefinitionLocation - 1 };
 };
+
+//[
+// instruction:8, 
+// fnName:1999, 
+// lengthOfArgs:2, 
+// arg1:10, 
+// arg2:20, 
+// fnDefLocation:8, 
+// retrunValue:0, 
+// 9, 
+// codeFnDef:99, 
+// fnName:1999, 
+// arg1:0, 
+// arg2:0,                       
+// remaing code 1, 10, 11, 6, 3, 7, 9,
+// ]
+

@@ -1,4 +1,4 @@
-import { fn } from "./functions.js";
+import { executeFunction } from "./functions.js";
 
 const copy = (memory, instructionAddress) => {
   const [sourceAddress, destinationAddress] = memory.slice(
@@ -91,7 +91,7 @@ export const processInstruction = (programCounter, memory) => {
     4: equal,
     5: lessThan,
     7: copy,
-    8: fn,
+    8: executeFunction,
     9: halt,
   };
 
@@ -101,7 +101,7 @@ export const processInstruction = (programCounter, memory) => {
     return operation(memory, programCounter);
   }
 
-  console.log("unknown instuction at Address:", programCounter);
+  console.log("unknown instruction at Address:", programCounter);
   return { isHalted: true, programCounter };
 };
 
@@ -118,8 +118,12 @@ const executeSprintCode = (memory) => {
   return [memory];
 };
 
-console.table(
-  executeSprintCode([
-    8, 1999, 2, 10, 20, 8, 0, 9, 99, 1999, 0, 0, 1, 10, 11, 6, 3, 7, 9,
-  ])
-);
+const main = () => {
+  console.table(
+    executeSprintCode([
+      8, 1999, 2, 10, 20, 8, 0, 9, 99, 1999, 0, 0, 1, 10, 11, 6, 3, 7, 9,
+    ])
+  );
+}
+  
+main();
